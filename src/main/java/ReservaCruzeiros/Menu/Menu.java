@@ -45,6 +45,7 @@ public class Menu {
     }
 
     private void mostrarReservas(Scanner scanner) throws Exception {
+        service.inicializaReceivers();
         scanner.nextLine();
 
         System.out.println("Destino: ");
