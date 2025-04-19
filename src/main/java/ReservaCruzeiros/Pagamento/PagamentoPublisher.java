@@ -2,9 +2,6 @@ package ReservaCruzeiros.Pagamento;
 
 import ReservaCruzeiros.Criptografia.Criptografia;
 import ReservaCruzeiros.Service.RabbitMQMetodos;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 
 public class PagamentoPublisher {
 
@@ -20,18 +17,8 @@ public class PagamentoPublisher {
     };
 
     private static void aprovaPagamento(String nomeCompleto) throws Exception {
-        String exchangeName = "pagamento-aprovado";
-        String routingKey = "pagamento";
         String mesangemCriptografada = Criptografia.criptografaMensagem(nomeCompleto);
-
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
-            channel.exchangeDeclare(exchangeName, "direct");
-
-            channel.basicPublish(exchangeName, routingKey, null, mesangemCriptografada.getBytes("UTF-8"));
-        }
+        RabbitMQMetodos.publisherExchange("pagamento-aprovado", "pagamento", mesangemCriptografada);
     }
 
     private static void recusaPagamento(String nomeCompleto) throws Exception {
