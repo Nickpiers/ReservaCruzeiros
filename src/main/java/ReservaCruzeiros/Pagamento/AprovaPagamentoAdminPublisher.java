@@ -1,23 +1,16 @@
 package ReservaCruzeiros.Pagamento;
 
+import ReservaCruzeiros.Service.RabbitMQMetodos;
 import com.rabbitmq.client.*;
 
 import java.util.Scanner;
 
 public class AprovaPagamentoAdminPublisher {
     private static void aprovaPagamento(int codAprovacao) throws Exception {
-        String queueName = "aprova-pagamento";
+        boolean aprovado = codAprovacao == 1;
+        String aprovadoStr = Boolean.toString(aprovado);
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        try (Connection connection = factory.newConnection()) {
-            Channel channel = connection.createChannel();
-            channel.queueDeclare(queueName, true, false, false, null);
-            boolean aprovado = codAprovacao == 1;
-            String aprovadoStr = Boolean.toString(aprovado);
-
-            channel.basicPublish("", queueName, MessageProperties.PERSISTENT_TEXT_PLAIN, aprovadoStr.getBytes("UTF-8"));
-        }
+        RabbitMQMetodos.publisherQueue("aprova-pagamento", aprovadoStr);
     };
 
     public static void recebeReservaCriada() throws Exception {
