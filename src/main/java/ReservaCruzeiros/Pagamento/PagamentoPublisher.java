@@ -6,8 +6,6 @@ import ReservaCruzeiros.Service.RabbitMQMetodos;
 public class PagamentoPublisher {
 
     public void processaPagamento(String nomeCompleto, String pagamento) throws Exception {
-        System.out.println("Processando pagamento...");
-
         if (pagamento.equals("aprovado")) {
             aprovaPagamento(nomeCompleto);
         }

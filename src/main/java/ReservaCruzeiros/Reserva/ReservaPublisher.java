@@ -9,6 +9,8 @@ public class ReservaPublisher {
         String nomeJunto = nomeCompleto.replaceAll("\\s+", "");
         System.out.println("---------------------------");
         System.out.println("Link para pagamento: https://ReservaCruzeiros.com/reserva/pagamento/" + nomeJunto);
+        Thread.sleep(2000);
+        System.out.println("Processando pagamento...");
 
         RabbitMQMetodos.publisherExchange("reserva-criada", "pagamento", nomeCompleto);
     };

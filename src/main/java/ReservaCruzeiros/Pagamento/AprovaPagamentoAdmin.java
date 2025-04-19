@@ -5,7 +5,7 @@ import com.rabbitmq.client.*;
 
 import java.util.Scanner;
 
-public class AprovaPagamentoAdminPublisher {
+public class AprovaPagamentoAdmin {
     private static void aprovaPagamento(int codAprovacao) throws Exception {
         boolean aprovado = codAprovacao == 1;
         String aprovadoStr = Boolean.toString(aprovado);
@@ -52,6 +52,6 @@ public class AprovaPagamentoAdminPublisher {
         }while(codAprovacao != 1 && codAprovacao != 2);
 
         System.out.println("APROVADO/RECUSADO ENVIADO!");
-        AprovaPagamentoAdminPublisher.aprovaPagamento(codAprovacao);
+        AprovaPagamentoAdmin.aprovaPagamento(codAprovacao);
     }
 }
