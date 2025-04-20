@@ -1,7 +1,6 @@
 package ReservaCruzeiros;
 
 import ReservaCruzeiros.Menu.Menu;
-import ReservaCruzeiros.Service.Service;
 
 // GERA .jar's:
 // mvn clean package -Pcliente
@@ -14,10 +13,7 @@ import ReservaCruzeiros.Service.Service;
 public class Cliente {
 
     public static void main(String[] argv) throws Exception {
-//        Service service = new Service();
-//        service.inicializaReceivers();
         Menu menu = new Menu();
-
         menu.start();
     }
 

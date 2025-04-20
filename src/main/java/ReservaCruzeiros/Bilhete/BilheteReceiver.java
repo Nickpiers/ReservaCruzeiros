@@ -1,6 +1,7 @@
 package ReservaCruzeiros.Bilhete;
 
 import ReservaCruzeiros.Criptografia.Criptografia;
+import ReservaCruzeiros.Service.Service;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -56,9 +57,6 @@ public class BilheteReceiver {
     }
 
     public static void pararPagamentoAprovado() throws Exception {
-        if (canalPagamento != null && tagPagamento != null) {
-            canalPagamento.basicCancel(tagPagamento);
-            System.out.println("🔴 Listener de pagamento aprovado parado.");
-        }
+        Service.pararReceiver(canalPagamento, tagPagamento);
     }
 }

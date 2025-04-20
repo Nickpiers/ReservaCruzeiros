@@ -1,5 +1,6 @@
 package ReservaCruzeiros.Pagamento;
 
+import ReservaCruzeiros.Service.Service;
 import com.rabbitmq.client.*;
 
 import java.nio.charset.StandardCharsets;
@@ -38,10 +39,7 @@ public class PagamentoReceiver {
     }
 
     public static void pararNovaReserva() throws Exception {
-        if (canalNovaReserva != null && tagNovaReserva != null) {
-            canalNovaReserva.basicCancel(tagNovaReserva);
-            System.out.println("🔴 Listener de nova reserva parado.");
-        }
+        Service.pararReceiver(canalNovaReserva, tagNovaReserva);
     }
 
     private static void aguardaAprovacao(String nomeCompleto) throws Exception {
