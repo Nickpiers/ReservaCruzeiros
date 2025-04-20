@@ -5,7 +5,6 @@ import ReservaCruzeiros.Marketing.PromocaoTipo;
 
 import java.util.Scanner;
 
-//java -jar adminPromocao.jar
 public class AdminPromocao {
     public static void main(String[] argv) throws Exception {
         Scanner scanner = new Scanner(System.in);

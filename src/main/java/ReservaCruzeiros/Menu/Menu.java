@@ -1,8 +1,11 @@
 package ReservaCruzeiros.Menu;
 
+import ReservaCruzeiros.Bilhete.BilheteReceiver;
 import ReservaCruzeiros.Marketing.MarketingService;
+import ReservaCruzeiros.Pagamento.PagamentoReceiver;
 import ReservaCruzeiros.Reserva.ReservaDto;
 import ReservaCruzeiros.Reserva.ReservaPublisher;
+import ReservaCruzeiros.Reserva.ReservaReceiver;
 import ReservaCruzeiros.Service.Service;
 
 import java.util.Scanner;
@@ -15,6 +18,12 @@ public class Menu {
         int codMenu;
 
         do {
+            ReservaReceiver.pararBilheteGerado();
+            ReservaReceiver.pararPagamentoRecusado();
+            ReservaReceiver.pararPagamentoAprovado();
+            BilheteReceiver.pararPagamentoAprovado();
+            PagamentoReceiver.pararNovaReserva();
+
             System.out.println("---------------------------");
             System.out.println("O que deseja fazer?: ");
             System.out.println("1 - Reserva");
@@ -44,7 +53,6 @@ public class Menu {
     }
 
     private void mostrarReservas(Scanner scanner) throws Exception {
-//        service.inicializaReceivers();
         scanner.nextLine();
 
         System.out.println("Destino: ");
@@ -81,6 +89,7 @@ public class Menu {
         System.out.print("Digite o numero de cabines: ");
         int numeroCabines = scanner.nextInt();
 
+        service.inicializaReceivers();
         ReservaDto reserva = new ReservaDto(nomeCompleto, dataEmbarque, numeroPassageiros, numeroCabines);
         ReservaPublisher.novaReserva(reserva);
         Thread.sleep(5000);

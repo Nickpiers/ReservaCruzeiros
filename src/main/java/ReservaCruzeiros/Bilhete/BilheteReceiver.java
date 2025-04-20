@@ -14,6 +14,9 @@ public class BilheteReceiver {
     private static final String QUEUE_NAME = "fila-bilhete";
     private static final String ROUTING_KEY = "pagamento";
 
+    private static Channel canalPagamento;
+    private static String tagPagamento;
+
     public static void inicializaAguardaPagamentoAprovado() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -39,6 +42,7 @@ public class BilheteReceiver {
                     BilhetePublisher bilhetePublisher = new BilhetePublisher();
                     bilhetePublisher.geraBilhete(nomeCompleto);
                 }
+
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             } catch (Exception e) {
                 System.err.println("Erro ao processar mensagem: " + e.getMessage());
@@ -47,6 +51,14 @@ public class BilheteReceiver {
             }
         };
 
-        channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> { });
+        tagPagamento = channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> {});
+        canalPagamento = channel;
+    }
+
+    public static void pararPagamentoAprovado() throws Exception {
+        if (canalPagamento != null && tagPagamento != null) {
+            canalPagamento.basicCancel(tagPagamento);
+            System.out.println("🔴 Listener de pagamento aprovado parado.");
+        }
     }
 }
