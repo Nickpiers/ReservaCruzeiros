@@ -2,7 +2,9 @@ package ReservaCruzeiros.Criptografia;
 
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
@@ -15,7 +17,13 @@ public class Criptografia {
     public static String criptografaMensagem(String mensagem) throws IOException, NoSuchAlgorithmException,
             InvalidKeySpecException, NoSuchProviderException, SignatureException, InvalidKeyException {
 
-        byte[] privateBytes = Files.readAllBytes(Paths.get("private.key"));
+        InputStream inputStream = Criptografia.class.getClassLoader().getResourceAsStream("private.key");
+        if (inputStream == null) {
+            throw new FileNotFoundException("Arquivo private.key não encontrado no classpath!");
+        }
+
+//        byte[] privateBytes = Files.readAllBytes(Paths.get("private.key"));
+        byte[] privateBytes = inputStream.readAllBytes();
         PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(privateBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("DSA");
         PrivateKey privateKey = keyFactory.generatePrivate(keySpec);
@@ -45,7 +53,13 @@ public class Criptografia {
         byte[] mensagemBytes = Base64.getDecoder().decode(mensagemBase64);
         byte[] assinaturaBytes = Base64.getDecoder().decode(assinaturaBase64);
 
-        byte[] keyBytes = Files.readAllBytes(Paths.get("public.key"));
+        InputStream inputStream = Criptografia.class.getClassLoader().getResourceAsStream("public.key");
+        if (inputStream == null) {
+            throw new FileNotFoundException("Arquivo public.key não encontrado no classpath!");
+        }
+
+//        byte[] keyBytes = Files.readAllBytes(Paths.get("public.key"));
+        byte[] keyBytes = inputStream.readAllBytes();
         X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
         KeyFactory keyFactory = KeyFactory.getInstance("DSA");
         PublicKey publicKey = keyFactory.generatePublic(keySpec);
