@@ -15,7 +15,6 @@ public class Menu {
         int codMenu;
 
         do {
-            service.limparConsole();
             System.out.println("---------------------------");
             System.out.println("O que deseja fazer?: ");
             System.out.println("1 - Reserva");
@@ -45,7 +44,7 @@ public class Menu {
     }
 
     private void mostrarReservas(Scanner scanner) throws Exception {
-        service.inicializaReceivers();
+//        service.inicializaReceivers();
         scanner.nextLine();
 
         System.out.println("Destino: ");

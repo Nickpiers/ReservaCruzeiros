@@ -7,7 +7,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 public class MarketingReceiver {
 
-    public static void inscreveNaPromocao(String promocaoNome, String queueName, String routingKey) throws Exception {
+    public static void inscreveNaPromocao(String promocaoNome, String routingKey) throws Exception {
         final String exchangeName = "promocoes-destino";
 
         System.out.println("Inscrito para a promoção: " + promocaoNome + "!");
@@ -17,8 +17,9 @@ public class MarketingReceiver {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
+        String queueName = channel.queueDeclare().getQueue();
+
         channel.exchangeDeclare(exchangeName, "direct");
-        channel.queueDeclare(queueName, true, false, false, null);
         channel.queueBind(queueName, exchangeName, routingKey);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {

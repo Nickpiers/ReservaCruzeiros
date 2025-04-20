@@ -10,8 +10,7 @@ public class MarketingService {
         };
 
         String nome = promocao.getNome();
-        String queueName = promocao.getQueueName();
         String routingKey = promocao.getRoutingKey();
-        MarketingReceiver.inscreveNaPromocao(nome, queueName, routingKey);
+        MarketingReceiver.inscreveNaPromocao(nome, routingKey);
     }
 }
