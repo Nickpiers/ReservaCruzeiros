@@ -1,6 +1,7 @@
 package ReservaCruzeiros.Bilhete;
 
 import ReservaCruzeiros.Criptografia.Criptografia;
+import ReservaCruzeiros.Service.Service;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -13,6 +14,9 @@ public class BilheteReceiver {
     private static final String EXCHANGE_NAME = "pagamento-aprovado";
     private static final String QUEUE_NAME = "fila-bilhete";
     private static final String ROUTING_KEY = "pagamento";
+
+    private static Channel canalPagamento;
+    private static String tagPagamento;
 
     public static void inicializaAguardaPagamentoAprovado() throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
@@ -39,6 +43,7 @@ public class BilheteReceiver {
                     BilhetePublisher bilhetePublisher = new BilhetePublisher();
                     bilhetePublisher.geraBilhete(nomeCompleto);
                 }
+
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             } catch (Exception e) {
                 System.err.println("Erro ao processar mensagem: " + e.getMessage());
@@ -47,6 +52,11 @@ public class BilheteReceiver {
             }
         };
 
-        channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> { });
+        tagPagamento = channel.basicConsume(QUEUE_NAME, false, deliverCallback, consumerTag -> {});
+        canalPagamento = channel;
+    }
+
+    public static void pararPagamentoAprovado() throws Exception {
+        Service.pararReceiver(canalPagamento, tagPagamento);
     }
 }

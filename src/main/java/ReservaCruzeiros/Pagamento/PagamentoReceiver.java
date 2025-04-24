@@ -1,10 +1,15 @@
 package ReservaCruzeiros.Pagamento;
 
+import ReservaCruzeiros.Service.Service;
 import com.rabbitmq.client.*;
 
 import java.nio.charset.StandardCharsets;
 
 public class PagamentoReceiver {
+
+    private static Channel canalNovaReserva;
+    private static String tagNovaReserva;
+
     public static void inicializaAguardaNovaReserva() throws Exception {
         final String exchangeName = "reserva-criada";
         final String queueName = "fila-pagamento-receiver";
@@ -29,7 +34,12 @@ public class PagamentoReceiver {
             channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };
 
-        channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
+        tagNovaReserva = channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        canalNovaReserva = channel;
+    }
+
+    public static void pararNovaReserva() throws Exception {
+        Service.pararReceiver(canalNovaReserva, tagNovaReserva);
     }
 
     private static void aguardaAprovacao(String nomeCompleto) throws Exception {

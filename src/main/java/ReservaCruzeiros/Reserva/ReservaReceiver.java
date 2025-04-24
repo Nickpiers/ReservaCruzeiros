@@ -1,16 +1,26 @@
 package ReservaCruzeiros.Reserva;
 
 import ReservaCruzeiros.Criptografia.Criptografia;
+import ReservaCruzeiros.Service.Service;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class ReservaReceiver {
+    private static Channel canalPagamentoAprovado;
+    private static String tagPagamentoAprovado;
+
+    private static Channel canalPagamentoRecusado;
+    private static String tagPagamentoRecusado;
+
+    private static Channel canalBilheteGerado;
+    private static String tagBilheteGerado;
 
     public static void inicializaAguardaPagamento() throws Exception {
         receiverPagamentoAprovado();
@@ -57,12 +67,12 @@ public class ReservaReceiver {
             }
         };
 
-        channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        tagPagamentoAprovado = channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        canalPagamentoAprovado = channel;
     }
 
-
     private static void receiverPagamentoRecusado() throws Exception {
-        String queueName = "pagamento-recusado";
+        final String queueName = "pagamento-recusado";
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -88,6 +98,7 @@ public class ReservaReceiver {
                 } else {
                     System.out.println("❌ Assinatura inválida! Pagamento possivelmente adulterado.");
                 }
+
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             } catch (Exception e) {
                 System.err.println("Erro ao processar mensagem: " + e.getMessage());
@@ -95,11 +106,13 @@ public class ReservaReceiver {
                 channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
             }
         };
-        channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
+
+        tagPagamentoRecusado = channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        canalPagamentoRecusado = channel;
     }
 
     private static void receiverBilheteGerado() throws Exception {
-        String queueName = "bilhete-gerado";
+        final String queueName = "bilhete-gerado";
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -114,6 +127,14 @@ public class ReservaReceiver {
             System.out.println("✅ Bilhete de '" + nomeCompleto + "' gerado!");
             channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
         };
-        channel.basicConsume(queueName, false, deliverCallback, consumerTag -> { });
+
+        tagBilheteGerado = channel.basicConsume(queueName, false, deliverCallback, consumerTag -> {});
+        canalBilheteGerado = channel;
+    }
+
+    public static void pararReservaReceivers() throws IOException {
+        Service.pararReceiver(canalPagamentoAprovado, tagPagamentoAprovado);
+        Service.pararReceiver(canalPagamentoRecusado, tagPagamentoRecusado);
+        Service.pararReceiver(canalBilheteGerado, tagBilheteGerado);
     }
 }

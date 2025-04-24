@@ -44,7 +44,6 @@ public class Menu {
     }
 
     private void mostrarReservas(Scanner scanner) throws Exception {
-//        service.inicializaReceivers();
         scanner.nextLine();
 
         System.out.println("Destino: ");
@@ -81,9 +80,11 @@ public class Menu {
         System.out.print("Digite o numero de cabines: ");
         int numeroCabines = scanner.nextInt();
 
+        service.inicializaReceivers();
         ReservaDto reserva = new ReservaDto(nomeCompleto, dataEmbarque, numeroPassageiros, numeroCabines);
         ReservaPublisher.novaReserva(reserva);
         Thread.sleep(5000);
+        service.paraTodosReceivers();
     }
 
     private void chamaPromocao(Scanner scanner) throws Exception {
